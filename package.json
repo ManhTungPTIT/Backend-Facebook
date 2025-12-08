@@ -1,0 +1,46 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec tsx index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "@types/express-session": "^1.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "firebase": "^12.4.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "prisma": "^6.8.2",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.0.3",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

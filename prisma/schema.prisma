@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}        
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  des String @db.LongText
+  img String @db.Text
+  userMain Int
+  user User @relation(fields: [userMain], references: [id])
+  like Like[]
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  userName String @db.VarChar(255)//tk login
+  password String @db.Text
+  date DateTime @updatedAt
+  sex Int 
+  name String  @db.VarChar(255)
+  img String? @db.Text
+  salt String @db.Text
+  isFriend Boolean @default(false)
+  mess Mess[]
+  like Like[]
+  post Post[]
+  comment Comment[]
+}
+
+model Mess{
+  id Int @id @default(autoincrement())
+  des String @db.LongText
+  img String @db.VarChar(255)
+  user User[]
+}
+
+model Comment{
+   id Int @id @default(autoincrement())
+   des String @db.LongText
+   user User @relation(fields: [userMain], references: [id])
+   userMain Int //id cua nguoi dang bai
+    userCus Int // id cua nguoi like
+}
+
+model Like{
+  id Int @id @default(autoincrement())
+  des String @db.LongText   
+  userMain Int //id cua nguoi dang bai  
+  userCus Int // id cua nguoi like
+  user User[] 
+  post Post[]
+}
