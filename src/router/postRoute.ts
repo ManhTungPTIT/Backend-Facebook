@@ -1,5 +1,5 @@
 import express from "express";
-import * as posts from "../src/controller/Post/uploadImgFirebase";
+import * as posts from "../controller/Post/uploadImgFirebase";
 import path from "path";
 import fs from "fs";
 import multer from "multer";
