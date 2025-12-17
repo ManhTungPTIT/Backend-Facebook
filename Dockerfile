@@ -1,19 +1,16 @@
-FROM node:22.15.0
-
+# build stage
+FROM node:22 AS builder
 WORKDIR /app
-
-# copy package
 COPY package*.json ./
-
-# install deps
 RUN npm install
-
-# copy source
 COPY . .
-
-# build typescript
 RUN npm run build
 
+# runtime stage
+FROM node:22
+WORKDIR /app
+COPY package*.json ./
+RUN npm install --omit=dev
+COPY --from=builder /app/dist ./dist
 EXPOSE 3000
-
-CMD ["npm", "start"]
+CMD ["node", "dist/index.js"]
