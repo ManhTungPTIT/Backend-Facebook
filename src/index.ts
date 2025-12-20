@@ -29,3 +29,7 @@ app.use(passport.session());
 app.use("/user", userRoute);
 app.use("/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
 app.use("/post", postRoute);
+
+app.listen(port, () => {
+  console.log("Server is listening on port", port);
+});
