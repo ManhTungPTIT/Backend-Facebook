@@ -58,7 +58,7 @@ export async function register(req: Request, res: Response) {
     }
 
     const userCurrent = await userDao.findUserByUserName(userName);
-    console.log(typeof new Date(date));
+    const refreshToken = "";
     if (!userCurrent) {
       console.log("zoooooo");
       await userDao.createUser(
@@ -67,7 +67,8 @@ export async function register(req: Request, res: Response) {
         name,
         genSalt(),
         new Date(date),
-        sex
+        sex,
+        refreshToken
       );
       console.log("Create user success");
       return res.status(200).json({ text: "Success" });
@@ -80,9 +81,10 @@ export async function register(req: Request, res: Response) {
 }
 
 //Login -> tạo Access + Refresh; LƯU refresh token vào session
-export function login(req: Request, res: Response, next: Function) {
+export async function login(req: Request, res: Response, next: Function) {
   console.log("Data: ", req.body);
-  passport.authenticate("local", { session: false }, (err, user, info) => {
+
+  passport.authenticate("local", async (err, user, info) => {
     if (err) return next(err);
     if (!user)
       return res.status(401).json({ error: info?.message || "Unauthorized" });
@@ -93,14 +95,23 @@ export function login(req: Request, res: Response, next: Function) {
       name: user.name,
       img: user.img,
     };
+
     const accessToken = signAccessToken(payload);
 
     // Refresh token: JWT nhưng LƯU TRONG SESSION
     const refreshToken = signRefreshToken({ sub: user.id });
+    const date = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    const expire = new Date(date.toISOString());
+
+    await userDao.updateRefreshToken(user.id, refreshToken, expire);
 
     // Lưu vào session
     req.session.refreshToken = refreshToken;
     req.session.userId = user.id;
+    req.session.save(() => {
+      console.log("LOGIN SESSION ID:", req.sessionID);
+      console.log("LOGIN SESSION:", req.session);
+    });
 
     const jwtToken = {
       access: accessToken,
@@ -111,9 +122,20 @@ export function login(req: Request, res: Response, next: Function) {
 }
 
 // Lấy Access token mới từ refresh token trong session
-export function refresh(req: Request, res: Response) {
-  const token = req.session.refreshToken;
-  if (!token)
+export async function refresh(req: Request, res: Response) {
+  const user = await userDao.findRefreshToken(req.body.userId!);
+  if (!user) {
+    console.log("User not found");
+    return res.status(401).json({ error: "User not found" });
+  }
+  const timeEpri = user.date.getTime();
+  if (timeEpri < Date.now()) {
+    console.log("RefreshToken expired");
+    return res.status(402).json({ error: "RefreshToken expired" });
+  }
+  const token = user.refreshToken;
+  console.log("token: ", token);
+  if (token !== req.body.refreshToken)
     return res.status(401).json({ error: "Missing refresh token in session" });
 
   try {
@@ -129,12 +151,10 @@ export function refresh(req: Request, res: Response) {
   }
 }
 
-// Logout -> huỷ session (mất refresh token)
-export function logout(req: Request, res: Response) {
-  req.session.destroy((err) => {
-    if (err)
-      return res.status(500).json({ error: "Failed to destroy session" });
-    res.clearCookie("sid"); // tên cookie mình đặt trong index.ts
-    return res.json({ message: "Logged out" });
-  });
+// Logout -> xóa refreshtoken trong db
+export async function logout(req: Request, res: Response) {
+  const userId = req.body.userId;
+  console.log("userId: ", req.body);
+  await userDao.updateRefreshToken(userId, "", new Date());
+  return res.status(200).json({ text: "Success" });
 }

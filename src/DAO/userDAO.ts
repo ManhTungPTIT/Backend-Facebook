@@ -8,7 +8,8 @@ export const createUser = async (
   name: string,
   salt: string,
   date: Date,
-  sex: number
+  sex: number,
+  refreshToken?: string
 ) => {
   return await prisma.user.create({
     data: {
@@ -18,6 +19,7 @@ export const createUser = async (
       salt,
       date,
       sex,
+      refreshToken,
     },
   });
 };
@@ -51,4 +53,28 @@ export const findUserByUserName = async (username: string) => {
 
 export const findAllUsers = async () => {
   return await prisma.user.findMany();
+};
+
+export const updateRefreshToken = async (
+  id: number,
+  refreshToken: string,
+  date: Date
+) => {
+  return await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      refreshToken: refreshToken,
+      date: date,
+    },
+  });
+};
+
+export const findRefreshToken = async (id: number) => {
+  return await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
 };

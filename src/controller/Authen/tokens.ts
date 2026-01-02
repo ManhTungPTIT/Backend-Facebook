@@ -4,7 +4,7 @@ config();
 
 const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET!;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET!;
-const ACCESS_TTL = process.env.ACCESS_TOKEN_TTL || "15m";
+const ACCESS_TTL = process.env.ACCESS_TOKEN_TTL || "5m";
 const REFRESH_TTL = process.env.REFRESH_TOKEN_TTL || "7d";
 
 export function signAccessToken(payload: object): string {
