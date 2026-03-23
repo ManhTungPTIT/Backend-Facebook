@@ -6,16 +6,18 @@ export const createUser = async (
   userName: string,
   password: string,
   name: string,
+  nameNoSign: string,
   salt: string,
   date: Date,
   sex: number,
-  refreshToken?: string
+  refreshToken?: string,
 ) => {
   return await prisma.user.create({
     data: {
       userName,
       password,
       name,
+      nameNoSign,
       salt,
       date,
       sex,
@@ -58,7 +60,7 @@ export const findAllUsers = async () => {
 export const updateRefreshToken = async (
   id: number,
   refreshToken: string,
-  date: Date
+  date: Date,
 ) => {
   return await prisma.user.update({
     where: {
@@ -75,6 +77,16 @@ export const findRefreshToken = async (id: number) => {
   return await prisma.user.findUnique({
     where: {
       id: id,
+    },
+  });
+};
+
+export const searchUserName = async (name: string) => {
+  return await prisma.user.findMany({
+    where: {
+      nameNoSign: {
+        contains: name,
+      },
     },
   });
 };

@@ -17,21 +17,23 @@ passport.use(
     { usernameField: "userName", passwordField: "password" },
     async (userName, password, cb) => {
       try {
+        console.log(" vao 1");
         const foundUser = await userDao.findUserByUserName(userName);
         console.log(foundUser);
-        // if (foundUser === null) {
-        //   return cb(null, false, {
-        //     message: "Incorrect username or password.",
-        //   });
-        // }
+        if (foundUser === null) {
+          console.log("Ko tim thay tai khoan");
+          return cb(null, false, {
+            message: "Email_not_found",
+          });
+        }
 
         const hashPassword = await hashPasswordPBKDF2(password, foundUser.salt);
         const ok = timingSafeEqualHex(foundUser.password, hashPassword);
-        // if (!ok) {
-        //   return cb(null, false, {
-        //     message: "Incorrect username or password.",
-        //   });
-        // }
+        if (!ok) {
+          return cb(null, false, {
+            message: "Incorrect username or password.",
+          });
+        }
 
         // Trả user “gọn” cho Passport
         return cb(null, {
@@ -43,8 +45,8 @@ passport.use(
       } catch (err) {
         return cb(err as any);
       }
-    }
-  )
+    },
+  ),
 );
 
 //Register
@@ -52,28 +54,37 @@ export async function register(req: Request, res: Response) {
   try {
     const { userName, password, name, date, sex } = req.body || {};
     console.log(userName, password, name, date, sex);
-    if (!userName || !password || !name || !date || !sex) {
+    if (!userName || !password || !name || !date) {
       console.log("Error");
       return res.status(400).json({ error: "Missing username/password" });
     }
 
     const userCurrent = await userDao.findUserByUserName(userName);
     const refreshToken = "";
+    const nameNoSign = name
+      .normalize("NFD") // tách dấu
+      .replace(/[\u0300-\u036f]/g, "") // bỏ dấu
+      .replace(/đ/g, "d")
+      .replace(/Đ/g, "d")
+      .toLowerCase() // viết thường
+      .trim() // bỏ space đầu cuối
+      .replace(/\s+/g, " ");
+
     if (!userCurrent) {
-      console.log("zoooooo");
       await userDao.createUser(
         userName,
         password,
         name,
+        nameNoSign,
         genSalt(),
         new Date(date),
         sex,
-        refreshToken
+        refreshToken,
       );
       console.log("Create user success");
       return res.status(200).json({ text: "Success" });
     } else {
-      return res.status(400).json({ error: "User is exis" });
+      return res.status(401).json({ error: "User is exis" });
     }
   } catch (err: any) {
     return res.status(400).json({ error: err.message || "Register failed" });
@@ -85,9 +96,15 @@ export async function login(req: Request, res: Response, next: Function) {
   console.log("Data: ", req.body);
 
   passport.authenticate("local", async (err, user, info) => {
-    if (err) return next(err);
-    if (!user)
+    if (err) {
+      console.log("Error: ", err);
+      return next(err);
+    }
+
+    if (!user) {
+      console.log("Info: ", info, " and ", info.message);
       return res.status(401).json({ error: info?.message || "Unauthorized" });
+    }
 
     const payload = {
       id: user.id,

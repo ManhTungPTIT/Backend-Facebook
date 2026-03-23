@@ -6,12 +6,16 @@ import passport from "passport";
 import cors from "cors";
 import path from "path";
 import MySQLStore from "express-mysql-session";
-import mysql from "mysql2/promise";
+import { createServer } from "../src/controller/Post/socket";
+import http from "http";
 
 const app = express();
 const port = 8080;
 const MySQLStoreSession = MySQLStore(session);
 const isProduction = process.env.NODE_ENV === "production";
+const server = http.createServer(app);
+
+createServer(server);
 
 const dbOptions = {
   host: "localhost",
@@ -32,9 +36,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: true,
     credentials: true,
-  })
+  }),
 );
 app.use(
   session({
@@ -47,13 +51,12 @@ app.use(
       httpOnly: true,
       secure: isProduction, // true nếu là production, false nếu là local
       sameSite: isProduction ? "none" : "lax", // none cho prod (cross-site), lax cho local
-      
+
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000, // Session expiration time (e.g., 24 hours)
     },
-  })
+  }),
 );
-console.log("Code dang chay");
 
 app.use(passport.initialize());
 
@@ -61,6 +64,6 @@ app.use("/user", userRoute);
 app.use("/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
 app.use("/post", postRoute);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Server is listening on port", port);
 });
