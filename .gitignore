@@ -1,43 +1,14 @@
-# Node modules
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Environment variables
 .env
-.env.*
-!.env.example
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory
-coverage/
-
-# Build / dist
 dist/
 build/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
+logs/
+*.log
 .vscode/
 .idea/
-
-# Temporary files
-tmp/
-temp/
-
-# Upload files
+.DS_Store
 uploads/
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
