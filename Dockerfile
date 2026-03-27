@@ -3,8 +3,14 @@ FROM node:22 AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
-COPY . .
+COPY prisma ./prisma
+ENV DATABASE_URL="mysql://root:123456@localhost:3306/facebook"
+
 RUN npx prisma generate
+
+# Copy source code
+COPY . .
+
 RUN npm run build
 
 # runtime stage
