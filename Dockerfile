@@ -4,7 +4,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY prisma ./prisma
-ENV DATABASE_URL="mysql://root:123456@localhost:3306/facebook"
+
 
 RUN npx prisma generate
 
