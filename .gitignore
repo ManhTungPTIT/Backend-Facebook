@@ -1,14 +1,8 @@
-node_modules/
-.env
-dist/
-build/
-logs/
+node_modules
+dist
+build
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
 *.log
-.vscode/
-.idea/
-.DS_Store
-uploads/
-
-# Prisma
-prisma/dev.db
-prisma/dev.db-journal
