@@ -4,14 +4,14 @@ const prisma = new PrismaClient();
 
 export const createComment = async (
   des: string,
-  userCus: number,
-  userMain: number
+  userId: number,
+  postId: number,
 ) => {
   return await prisma.comment.create({
     data: {
       des,
-      userCus,
-      userMain,
+      userId,
+      postId,
     },
   });
 };
@@ -31,8 +31,8 @@ export const findAllComments = async () => {
 export const updateComment = async (
   id: number,
   des: string,
-  userCus: number,
-  userMain: number
+  userId: number,
+  postId: number,
 ) => {
   return await prisma.comment.update({
     where: {
@@ -40,8 +40,8 @@ export const updateComment = async (
     },
     data: {
       des,
-      userCus,
-      userMain,
+      userId,
+      postId,
     },
   });
 };
