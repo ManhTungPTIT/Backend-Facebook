@@ -21,21 +21,21 @@ model User {
   isFriend     Boolean  @default(false)
   date         DateTime @updatedAt
 
-  posts        Post[]
-  comments     Comment[]
-  likes        Like[]
-  memberRooms  MemberRoom[]
-  mess         Mess[]
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  memberRooms      MemberRoom[]
+  mess             Mess[]
   sentRequests     FriendRequest[] @relation("SentFriendRequests")
   receivedRequests FriendRequest[] @relation("ReceivedFriendRequests")
 
-  user Friendship[] @relation("UserFriends")
+  user   Friendship[] @relation("UserFriends")
   friend Friendship[] @relation("FriendOf")
 }
 
 //loi moi ket ban
-model FriendRequest{
-  id        Int      @id @default(autoincrement())
+model FriendRequest {
+  id         Int      @id @default(autoincrement())
   senderId   Int
   receiverId Int
   status     String   @default("pending")
@@ -43,7 +43,6 @@ model FriendRequest{
 
   sender   User @relation("SentFriendRequests", fields: [senderId], references: [id])
   receiver User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id])
- 
 }
 
 //quan he ban be
@@ -56,6 +55,7 @@ model Friendship {
   user   User @relation("UserFriends", fields: [userId], references: [id])
   friend User @relation("FriendOf", fields: [friendId], references: [id])
 
+  @@id([userId, friendId])
 }
 
 model Post {
@@ -66,7 +66,7 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user      User @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
   likes    Like[]
   comments Comment[]
 }
@@ -82,48 +82,46 @@ model Comment {
 }
 
 model Like {
-  id     Int @id @default(autoincrement())
+  id     Int  @id @default(autoincrement())
   userId Int
-  postId Int 
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
+  postId Int
+  user   User @relation(fields: [userId], references: [id])
+  post   Post @relation(fields: [postId], references: [id])
 }
 
 model Room {
-  id        Int      @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   type      Boolean
-  title     String   @db.VarChar(255)
-  createdAt DateTime @default(now())
-  members  MemberRoom[]
-  mess Mess[]
+  title     String       @db.VarChar(255)
+  createdAt DateTime     @default(now())
+  members   MemberRoom[]
+  mess      Mess[]
 }
 
 model MemberRoom {
-  id     Int @id @default(autoincrement())
+  id     Int      @id @default(autoincrement())
   roomId Int
   userId Int
   joinAt DateTime @default(now())
 
-   room Room @relation(fields: [roomId], references: [id])
+  room Room @relation(fields: [roomId], references: [id])
   user User @relation(fields: [userId], references: [id])
 
   @@unique([roomId, userId])
-
 }
 
 model Mess {
-  id        Int      @id @default(autoincrement())
-  roomId    Int
-  senderId  Int
-  content   String  @db.LongText
-  createdAt DateTime @default(now())
-  deletedAt DateTime?
+  id         Int          @id @default(autoincrement())
+  roomId     Int
+  senderId   Int
+  content    String       @db.LongText
+  createdAt  DateTime     @default(now())
+  deletedAt  DateTime?
   attachment Attachment[]
   messStatus MessStatus[]
 
-  room        Room        @relation(fields: [roomId], references: [id])
-  sender      User        @relation(fields: [senderId], references: [id])
-  
+  room   Room @relation(fields: [roomId], references: [id])
+  sender User @relation(fields: [senderId], references: [id])
 }
 
 model MessStatus {
@@ -132,14 +130,14 @@ model MessStatus {
   userId    Int
   status    Boolean
   updatedAt DateTime @updatedAt
-  
+
   message Mess @relation(fields: [messageId], references: [id])
 }
 
 model Attachment {
-  id        Int @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   messageId Int
   fileUrl   String @db.Text
   fileType  String @db.VarChar(50)
-   message Mess @relation(fields: [messageId], references: [id])
+  message   Mess   @relation(fields: [messageId], references: [id])
 }
