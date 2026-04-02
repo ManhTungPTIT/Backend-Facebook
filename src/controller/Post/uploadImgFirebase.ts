@@ -10,7 +10,7 @@ export const createPost = async (req: Request, res: Response) => {
   console.log(files);
 
   const imageUrls = files.map(
-    (file) => `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+    (file) => `${req.protocol}://${req.get("host")}/uploads/${file.filename}`,
   );
 
   console.log(imageUrls);
@@ -18,10 +18,11 @@ export const createPost = async (req: Request, res: Response) => {
   imageUrls.forEach((img) => {
     imgData += img + ",";
   });
+
   const postData = {
-    des: req.body.content,
+    des: String(req.body.content),
     img: imgData,
-    userMain: Number(req.body.userId),
+    userId: Number(req.body.userId),
   };
   const post = await postDAO.createPost(postData);
   const postRes = await postDAO.findPostById(post.id);
