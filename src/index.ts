@@ -6,7 +6,7 @@ import passport from "passport";
 import cors from "cors";
 import path from "path";
 import MySQLStore from "express-mysql-session";
-import { createServer } from "../src/controller/Post/socket";
+import { createServer } from "./controller/Post/socket";
 import http from "http";
 
 const app = express();

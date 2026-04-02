@@ -2,7 +2,6 @@ import * as userDao from "../../DAO/userDAO";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { hashPasswordPBKDF2, timingSafeEqualHex, genSalt } from "./crypto";
-import crypto from "crypto";
 import { Request, Response } from "express";
 import {
   signAccessToken,
