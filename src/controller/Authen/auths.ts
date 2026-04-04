@@ -18,7 +18,7 @@ passport.use(
       try {
         console.log(" vao 1");
         const foundUser = await userDao.findUserByUserName(userName);
-        console.log(foundUser);
+        console.log("Account find: ", foundUser);
         if (foundUser === null) {
           console.log("Ko tim thay tai khoan");
           return cb(null, false, {
@@ -28,6 +28,8 @@ passport.use(
 
         const hashPassword = await hashPasswordPBKDF2(password, foundUser.salt);
         const ok = timingSafeEqualHex(foundUser.password, hashPassword);
+        console.log("Hasspass: ", hashPassword);
+        console.log("Foundpass: ", foundUser.password);
         if (!ok) {
           return cb(null, false, {
             message: "Incorrect username or password.",
@@ -59,6 +61,7 @@ export async function register(req: Request, res: Response) {
     }
 
     const userCurrent = await userDao.findUserByUserName(userName);
+    console.log("userFind: ", userCurrent);
     const refreshToken = "";
     const nameNoSign = name
       .normalize("NFD") // tách dấu
@@ -69,13 +72,16 @@ export async function register(req: Request, res: Response) {
       .trim() // bỏ space đầu cuối
       .replace(/\s+/g, " ");
 
+    const salt = genSalt();
+    const pass = hashPasswordPBKDF2(password, salt);
+
     if (!userCurrent) {
       await userDao.createUser(
         userName,
-        password,
+        pass.toString(),
         name,
         nameNoSign,
-        genSalt(),
+        salt,
         new Date(date),
         sex,
         refreshToken,

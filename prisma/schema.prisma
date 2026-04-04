@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,7 +11,7 @@ datasource db {
 model User {
   id           Int      @id @default(autoincrement())
   userName     String   @db.VarChar(255)
-  password     String   @db.Text
+  password     String   @db.Text//hasspassword
   refreshToken String   @db.Text
   salt         String   @db.Text
   name         String   @db.VarChar(255)
