@@ -16,9 +16,8 @@ passport.use(
     { usernameField: "userName", passwordField: "password" },
     async (userName, password, cb) => {
       try {
-        console.log(" vao 1");
         const foundUser = await userDao.findUserByUserName(userName);
-        console.log("Account find: ", foundUser);
+
         if (foundUser === null) {
           console.log("Ko tim thay tai khoan");
           return cb(null, false, {
@@ -26,10 +25,13 @@ passport.use(
           });
         }
 
-        const hashPassword = await hashPasswordPBKDF2(password, foundUser.salt);
+        const hashPassword = await hashPasswordPBKDF2(
+          password.trim(),
+          foundUser.salt,
+        );
+
         const ok = timingSafeEqualHex(foundUser.password, hashPassword);
-        console.log("Hasspass: ", hashPassword);
-        console.log("Foundpass: ", foundUser.password);
+
         if (!ok) {
           return cb(null, false, {
             message: "Incorrect username or password.",
@@ -52,6 +54,7 @@ passport.use(
 
 //Register
 export async function register(req: Request, res: Response) {
+  console.log("Send request");
   try {
     const { userName, password, name, date, sex } = req.body || {};
     console.log(userName, password, name, date, sex);
@@ -73,7 +76,8 @@ export async function register(req: Request, res: Response) {
       .replace(/\s+/g, " ");
 
     const salt = genSalt();
-    const pass = hashPasswordPBKDF2(password, salt);
+    const pass = await hashPasswordPBKDF2(password.trim(), salt);
+    console.log("pass: ", pass);
 
     if (!userCurrent) {
       await userDao.createUser(

@@ -44,10 +44,13 @@ model FriendRequest {
 
   sender   User @relation("SentFriendRequests", fields: [senderId], references: [id])
   receiver User @relation("ReceivedFriendRequests", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId])
 }
 
 //quan he ban be
 model Friendship {
+  
   userId   Int
   friendId Int
 

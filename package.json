@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "dev": "node prisma-env.js && nodemon --watch src --ext ts --exec tsx src/index.ts",
+    "dev": "node src/prisma-env.js && nodemon --watch src --ext ts --exec tsx src/index.ts",
     "build": "tsc",
-    "start": "node prisma-env.ts && node dist/index.js",
-    "prisma:generate": "node prisma-env.js && prisma generate",
-    "prisma:migrate": "node prisma-env.js && prisma migrate dev",
-    "prisma:deploy": "node prisma-env.js && prisma migrate deploy"
+    "start": "node dist/prisma-env.ts && node dist/index.js",
+    "prisma:generate": "node src/prisma-env.js && prisma generate",
+    "prisma:migrate": "node src/prisma-env.js && prisma migrate dev",
+    "prisma:deploy": "node src/prisma-env.js && prisma migrate deploy"
   },
   "author": "",
   "license": "ISC",
