@@ -8,6 +8,7 @@ import path from "path";
 import MySQLStore from "express-mysql-session";
 import { createServer } from "./controller/Post/socket";
 import http from "http";
+import "./prisma-env";
 
 const app = express();
 const port = 8080;
@@ -18,11 +19,11 @@ const server = http.createServer(app);
 createServer(server);
 
 const dbOptions = {
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "123456",
-  database: "facebook",
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 };
 
 const sessionStore = new MySQLStoreSession(dbOptions);
