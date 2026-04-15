@@ -67,5 +67,6 @@ app.use("/post", postRoute);
 
 server.listen(port, () => {
   console.log("Server is listening on port", port);
+  console.log("ALL ENV:", Object.keys(process.env));
   console.log("DATABASE_URL:", process.env.DATABASE_URL);
 });
