@@ -8,7 +8,6 @@ import path from "path";
 import MySQLStore from "express-mysql-session";
 import { createServer } from "./controller/Post/socket";
 import http from "http";
-import "./prisma-env";
 
 const app = express();
 const port = 8080;
@@ -60,13 +59,12 @@ app.use(
 );
 
 app.use(passport.initialize());
-
 app.use("/user", userRoute);
 app.use("/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
 app.use("/post", postRoute);
 
 server.listen(port, () => {
   console.log("Server is listening on port", port);
-  console.log("ALL ENV:", Object.keys(process.env));
   console.log("DATABASE_URL:", process.env.DATABASE_URL);
+  console.log(JSON.stringify(process.env.DATABASE_URL));
 });
