@@ -20,7 +20,14 @@ export function signRefreshToken(payload: object): string {
 }
 
 export function verifyAccessToken(token: string) {
-  return jwt.verify(token, ACCESS_SECRET);
+  try {
+    const decoded = jwt.verify(token, ACCESS_SECRET);
+    console.log("Verify", decoded);
+    return decoded;
+  } catch (err) {
+    console.log("Token invalid:", err);
+    return null; // hoặc throw custom error
+  }
 }
 
 export function verifyRefreshToken(token: string) {

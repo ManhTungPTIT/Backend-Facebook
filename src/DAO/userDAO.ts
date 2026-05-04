@@ -35,8 +35,6 @@ export const findUserById = async (id: number) => {
 };
 
 export const findUserByUserName = async (username: string) => {
-  console.log("🔍 [findUserByUserName] Đang tìm:", username);
-
   try {
     const user = await prisma.user.findFirst({
       where: {

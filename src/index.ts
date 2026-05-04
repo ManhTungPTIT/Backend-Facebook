@@ -1,6 +1,7 @@
 import express from "express";
 import userRoute from "./router/userRouter";
 import postRoute from "./router/postRoute";
+import messRoute from "./router/messRoute";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
@@ -10,7 +11,7 @@ import { createServer } from "./controller/Post/socket";
 import http from "http";
 
 const app = express();
-const port = 8080;
+const port = 5000;
 const MySQLStoreSession = MySQLStore(session);
 const isProduction = process.env.NODE_ENV === "production";
 const server = http.createServer(app);
@@ -34,12 +35,15 @@ if (isProduction) {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  }),
-);
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+};
+
+app.use(cors(corsOptions));
+
 app.use(
   session({
     name: "connect.sid",
@@ -62,9 +66,8 @@ app.use(passport.initialize());
 app.use("/user", userRoute);
 app.use("/uploads", express.static(path.join(process.cwd(), "src", "uploads")));
 app.use("/post", postRoute);
+app.use("/mess", messRoute);
 
 server.listen(port, () => {
   console.log("Server is listening on port", port);
-  console.log("DATABASE_URL:", process.env.DATABASE_URL);
-  console.log(JSON.stringify(process.env.DATABASE_URL));
 });

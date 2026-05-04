@@ -96,7 +96,7 @@ model Like {
 model Room {
   id        Int          @id @default(autoincrement())
   type      Boolean
-  title     String       @db.VarChar(255)
+  title     String?       @db.VarChar(255)
   createdAt DateTime     @default(now())
   members   MemberRoom[]
   mess      Mess[]
@@ -106,6 +106,7 @@ model MemberRoom {
   id     Int      @id @default(autoincrement())
   roomId Int
   userId Int
+  nickname String? @db.VarChar(255)
   joinAt DateTime @default(now())
 
   room Room @relation(fields: [roomId], references: [id])

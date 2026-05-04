@@ -77,7 +77,6 @@ export async function register(req: Request, res: Response) {
 
     const salt = genSalt();
     const pass = await hashPasswordPBKDF2(password.trim(), salt);
-    console.log("pass: ", pass);
 
     if (!userCurrent) {
       await userDao.createUser(
